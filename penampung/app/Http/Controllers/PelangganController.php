@@ -178,7 +178,7 @@ class PelangganController extends Controller
                     $get_data_pegawai = DB::table('tb_pegawai')->where('employee_id', $pegawai['EMPLOYEE_ID'])->where('id_bagian_kantor_pusat', 0)->where('id_bagian_kantor_cabang', 0)->where('id_bagian_kantor_wilayah', 0)->where('delete_pegawai', 'N')->first();
 
                     $get_kepala_unit_kerja  = DB::table('tb_kepala_unit_kerja')->where('delete_kepala_unit_kerja', 'N')->where('id_pegawai', $get_data_pegawai->id_pegawai)->first();
-                    if (!is_null($get_data_pegawai) && !is_null($get_kepala_unit_kerja)) {
+                    if (!is_null($get_data_pegawai) && is_null($get_kepala_unit_kerja)) {
 
                         $prosesDepartmentPegawai = strtolower(str_replace(' ', '', $pegawai['DEPARTMENT_NAME']));
                         if (array_key_exists($posisiPegawai, $resultPosisiMapping)) {
@@ -189,7 +189,7 @@ class PelangganController extends Controller
 
 
                         // Menyimpan data berdasarkan kondisi
-          
+
                         if ($pegawai['BRANCH_NAME'] == "Kantor Pusat") {
                             // dd($pegawai) ;
                             if (array_key_exists($prosesDepartmentPegawai,  $processedBagianKantorPusat)) {
@@ -1252,7 +1252,7 @@ class PelangganController extends Controller
             }
         }
 
-      
+
         return view('pages.user.ubah', compact('unit_kerja', 'pegawai', 'nama_posisi', 'id_unit_kerja', 'bagian_unit', 'id_bagian', 'kantor_pusat', 'kantor_cabang', 'kantor_wilayah', 'bagian_kantor_pusat', 'bagian_kantor_cabang', 'bagian_kantor_wilayah'));
     }
 
