@@ -1,0 +1,76 @@
+<?php
+	$pegawai = DB::table('tb_pegawai')
+	->where([['tb_pegawai.delete_pegawai','N'],['tb_pegawai.status_pegawai','Aktif'],['tb_pegawai.id_pegawai', Session::get('id_pegawai')]])
+	->get();
+	if($pegawai->count() < 1){
+		header('Location: '.route('faq'));
+		exit();
+	}
+
+    $kategori = DB::table('tb_kategori_faq')->where('id_kategori_faq', $_GET['update'])->where('is_delete','N')->first();
+    if(is_null($kategori)){
+		header('Location: '.route('faq'));
+		exit();
+	}
+?>
+
+@section('content')
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card">
+			  <div class="card-body">
+			    <div class="card-title"><b><i class='bx bx-plus'></i> Tambah Kategori FAQ</b></div>
+			    <hr style="border-style: dashed;">
+				<?php
+				  if(session()->has('alert')){
+				    $explode = explode('_', session()->get('alert'));
+				    echo '
+				      <div class="alert alert-'.$explode[0].'"><i class="bx bx-error-circle"></i> '.$explode[1].'</div>
+				    ';
+				  }
+				?>
+				<form method="POST" enctype="multipart/form-data" onsubmit="show(true)" action="<?= route('faq.update.kategori', $kategori->id_kategori_faq) ?>">
+				    <?= csrf_field() ?>
+
+				    <div class="row">
+				    	<div class="col-md-6">
+							<label>Kategori </label>
+							<input type="text" name="kategori" value="{{$kategori->nama_kategori_faq}}" class="form-control" required="" maxlength="255" placeholder="Harap di isi ...">
+				    		<br>
+				    	</div>
+
+				    </div>
+                    <br>
+
+					<button type="button" class="btn btn-sm btn-warning" id="kembali">
+					  <i class='bx bx-arrow-back'></i> Kembali
+					</button>
+
+					<button type="submit" class="btn btn-sm btn-primary">
+					  <i class='bx bx-check-double'></i> Perbarui
+					</button>
+
+				</form>
+			  </div>
+			</div>
+			<p>&nbsp;</p>
+		</div>
+	</div>
+
+@stop
+
+@section('script')
+
+	<script type="text/javascript">
+	  $('#kembali').on('click', function() {
+	    loadPage('<?= route('faq') ?>');
+	  });
+	</script>
+
+	<script src="//cdn.ckeditor.com/4.16.0/full/ckeditor.js"></script>
+	<script type="text/javascript">
+	  CKEDITOR.replace('ckeditor');
+	</script>
+
+@stop
