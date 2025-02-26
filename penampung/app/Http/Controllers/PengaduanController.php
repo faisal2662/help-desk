@@ -67,8 +67,11 @@ class PengaduanController extends Controller
         } else {
             $input = "";
         }
-        $filter = $_GET['filter'];
-        $pengaduan = $this->Transaksi($filter);
+  
+
+            $filter = $_GET['filter'];
+            $pengaduan = $this->Transaksi($filter);
+
 
         return view('pages.pengaduan.index', compact('input', 'pengaduan'));
     }
@@ -1114,6 +1117,9 @@ class PengaduanController extends Controller
     }
     public function show($id, $status)
     {
+
+        $kantorCabang = DB::table('tb_kantor_cabang')->where('delete_kantor_cabang','N')->pluck('id_kantor_cabang', 'nama_kantor_cabang')->toArray();
+        $kantorWilayah = DB::table('tb_kantor_wilayah')->where('delete_kantor_wilayah','N')->pluck('id_kantor_wilayah', 'nama_kantor_wilayah')->toArray();
         $id_pengaduan = $id;
         $status_klasifikasi = [
             'High' => 'danger',
@@ -1267,8 +1273,8 @@ class PengaduanController extends Controller
                                 });
                         })
                         ->where('tb_pengaduan.delete_pengaduan', 'N')
-                        ->where('tb_pengaduan.id_pengaduan', request()->get('view')) // Menggunakan request() untuk mendapatkan parameter
-                        ->where('tb_pengaduan.status_pengaduan', request()->get('filter')) // Jika diperlukan
+                        ->where('tb_pengaduan.id_pengaduan', $id) // Menggunakan request() untuk mendapatkan parameter
+                        ->where('tb_pengaduan.status_pengaduan', $status) // Jika diperlukan
                         ->orderBy('tb_pengaduan.id_pengaduan', 'DESC')
                         ->get();
                     // dd($pengaduan);
@@ -1310,7 +1316,7 @@ class PengaduanController extends Controller
         }
 
         if ($pengaduan->count() < 1) {
-            header('Location: ' . route('pengaduan'));
+         return redirect()->back();
             exit();
         } else {
             foreach ($pengaduan as $data_pengaduan);
@@ -1413,11 +1419,15 @@ class PengaduanController extends Controller
             $data_pengaduan->tgl_pengaduan = $this->time_elapsed_string($data_pengaduan->tgl_pengaduan);
             // end kantor bagian pengaduan
         }
+
         return view('pages.pengaduan.lihat', compact('data_session_pegawai', 'id_pengaduan', 'status', 'data_pegawai', 'kantor_pengaduan', 'bagian_pengaduan', 'kantor_pegawai', 'bagian_pegawai', 'data_pengaduan', 'lampiran', 'status_pengaduan', 'jawaban', 'tanggapan'));
     }
 
     public function showFriend($id)
     {
+        $kantorCabang = DB::table('tb_kantor_cabang')->where('delete_kantor_cabang','N')->pluck('id_kantor_cabang', 'nama_kantor_cabang')->toArray();
+        $kantorWilayah = DB::table('tb_kantor_wilayah')->where('delete_kantor_wilayah','N')->pluck('id_kantor_wilayah', 'nama_kantor_wilayah')->toArray();
+
         $id_pengaduan = $id;
         $status_klasifikasi = [
             'High' => 'danger',
@@ -1548,30 +1558,14 @@ class PengaduanController extends Controller
                         ->orderBy('tb_pengaduan.id_pengaduan', 'DESC')
                         ->get();
                 } else {
-                    $kantor_pusat = App\Models\KantorPusat::with('BagianKantorPusat')
-                        ->whereHas('BagianKantorPusat', function ($query) use ($data_unit_kerja) {
-                            $query->where('id_bagian_kantor_pusat', $data_unit_kerja->id_bagian_kantor_pusat)->where('delete_bagian_kantor_pusat', 'N');
-                        })
-                        ->first();
-
-                    // Kumpulkan semua ID bagian kantor wilayah
-                    $bagian_ids = $kantor_pusat->BagianKantorPusat->pluck('id_bagian_kantor_pusat');
-
-                    // Ambil semua pengaduan terkait sekaligus
-                    $pengaduan = App\Models\Pengaduan::with('BagianKantorPusat')
-                        ->whereIn('id_bagian_kantor_pusat', $bagian_ids)
-                        ->where('id_pengaduan', $id)
-                        ->where('delete_pengaduan', 'N')
-                        ->where(function ($query) {
-                            $query->where('tb_pengaduan.status_pengaduan', '=', 'Approve')->orWhere('tb_pengaduan.status_pengaduan', '=', 'On Progress')->orWhere('tb_pengaduan.status_pengaduan', '=', 'Moving')->orWhere('tb_pengaduan.status_pengaduan', '=', 'Solved')->orWhere('tb_pengaduan.status_pengaduan', '=', 'Read')->orWhere('tb_pengaduan.status_pengaduan', '=', 'Finish');
-                        })
-                        ->get();
+                   $pengaduan = Pengaduan::where('delete_pengaduan', 'N')->where('id_pengaduan', $id)->get();
+                //    dd($pengaduan);
                 }
             } else {
                 $pengaduan = DB::table('tb_pengaduan')
                     ->where('tb_pengaduan.id_bagian_kantor_pusat', $data_session_pegawai->id_bagian_kantor_pusat)
                     ->where('tb_pengaduan.id_bagian_kantor_cabang', $data_session_pegawai->id_bagian_kantor_cabang)
-                    ->where('tb_pengaduan.id_bagian_kantor_wilayah', $data_session_pegawai->id_bagian_kantor_wilayah)
+                      ->where('tb_pengaduan.id_bagian_kantor_wilayah', $data_session_pegawai->id_bagian_kantor_wilayah)
                     ->where('tb_pengaduan.delete_pengaduan', '=', 'N')
                     ->where('tb_pengaduan.id_pengaduan', '=', $id)
                     ->where(function ($query) {
@@ -1583,7 +1577,7 @@ class PengaduanController extends Controller
         }
 
         if ($pengaduan->count() < 1) {
-            header('Location: ' . route('pengaduan'));
+            return redirect()->back();
             exit();
         } else {
             foreach ($pengaduan as $data_pengaduan);
@@ -1622,17 +1616,18 @@ class PengaduanController extends Controller
                         $kantor_pegawai = $data_kantor_pusat->nama_kantor_pusat;
                         $bagian_pegawai = $data_kantor_pusat->nama_bagian_kantor_pusat;
                     }
-                } elseif ($data_pegawai->kantor_pegawai == 'Kantor Cabang') {
+                } elseif (array_key_exists($data_pegawai->kantor_pegawai, $kantorCabang)) {
                     $kantor_cabang = DB::table('tb_bagian_kantor_cabang')
-                        ->join('tb_kantor_cabang', 'tb_bagian_kantor_cabang.id_kantor_cabang', '=', 'tb_kantor_cabang.id_kantor_cabang')
-                        ->where('tb_bagian_kantor_cabang.id_bagian_kantor_cabang', '=', $data_pegawai->id_bagian_kantor_cabang)
-                        ->get();
+                    ->join('tb_kantor_cabang', 'tb_bagian_kantor_cabang.id_kantor_cabang', '=', 'tb_kantor_cabang.id_kantor_cabang')
+                    ->where('tb_bagian_kantor_cabang.id_bagian_kantor_cabang', '=', $data_pegawai->id_bagian_kantor_cabang)
+                    ->get();
+                    dd($kantor_cabang);
                     if ($kantor_cabang->count() > 0) {
                         foreach ($kantor_cabang as $data_kantor_cabang);
                         $kantor_pegawai = $data_kantor_cabang->nama_kantor_cabang;
                         $bagian_pegawai = $data_kantor_cabang->nama_bagian_kantor_cabang;
                     }
-                } elseif ($data_pegawai->kantor_pegawai == 'Kantor Wilayah') {
+                } elseif (array_key_exists($data_pegawai->kantor_pegawai, $kantorWilayah)) {
                     $kantor_wilayah = DB::table('tb_bagian_kantor_wilayah')
                         ->join('tb_kantor_wilayah', 'tb_bagian_kantor_wilayah.id_kantor_wilayah', '=', 'tb_kantor_wilayah.id_kantor_wilayah')
                         ->where('tb_bagian_kantor_wilayah.id_bagian_kantor_wilayah', '=', $data_pegawai->id_bagian_kantor_wilayah)
