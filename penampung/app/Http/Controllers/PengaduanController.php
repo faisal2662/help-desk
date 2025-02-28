@@ -67,7 +67,7 @@ class PengaduanController extends Controller
         } else {
             $input = "";
         }
-  
+
 
             $filter = $_GET['filter'];
             $pengaduan = $this->Transaksi($filter);
@@ -1680,7 +1680,7 @@ class PengaduanController extends Controller
         }
         return view('pages.pengaduan.lihat_friend', compact('id_pengaduan', 'data_session_pegawai', 'data_pegawai', 'kantor_pengaduan', 'bagian_pengaduan', 'kantor_pegawai', 'bagian_pegawai', 'data_pengaduan', 'lampiran', 'status_pengaduan', 'status_klasifikasi', 'jawaban', 'tanggapan'));
     }
-    function time_elapsed_string($datetime, $full = false)
+function time_elapsed_string($datetime, $full = false)
     {
         $now = new DateTime();
         $ago = new DateTime($datetime);
