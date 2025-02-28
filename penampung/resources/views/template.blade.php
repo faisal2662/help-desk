@@ -77,7 +77,7 @@
 
             if ($unit_kerja->count() > 0) {
                 foreach ($unit_kerja as $data_unit_kerja) {
-                    $kantor_wilayah = DB::table('tb_bagian_kantor_wilayah')->join('tb_kantor_wilayah', 'tb_bagian_kantor_wilayah.id_kantor_wilayah', '=', 'tb_kantor_wilayah.id_kantor_wilayah')->where('tb_bagian_kantor_wilayah.id_bagian_kantor_wilayah', '=', $data_unit_kerja->id_bagian_kantor_wilayah)->get();
+                    $kantor_wilayah = DB::table('tb_bagian_kantor_wilayah')->join('tb_kantor_wilayah', 'tb_bagian_kantor_wilayah.id_kantor_wilayah', '=', 'tb_kantor_wilayah.id_kantor_wilayah')->where('tb_kantor_wilayah.id_kantor_wilayah', '=', $data_unit_kerja->id_bagian_kantor_wilayah)->get();
                     if ($kantor_wilayah->count() > 0) {
                         foreach ($kantor_wilayah as $data_kantor_wilayah);
                         $kantor = $data_kantor_wilayah->nama_kantor_wilayah;
