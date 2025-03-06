@@ -949,7 +949,6 @@ class PelangganController extends Controller
     public function datatables(Request $request)
     {
         $role = $this->role->role(Auth::user()->id_pegawai, "", $this->route);
-
         $pelanggan = Pegawai::with('NamaPosisi')
             ->where([['tb_pegawai.delete_pegawai', 'N']])
             ->orderBy('tb_pegawai.id_pegawai', 'DESC')

@@ -126,7 +126,7 @@
     <link rel="stylesheet" href="{{ asset('template/css/vertical-layout-light/style.css') }}">
     <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/2.1.2/css/dataTables.dataTables.min.css" rel="stylesheet">
+    {{-- <link href="https://cdn.datatables.net/2.1.2/css/dataTables.dataTables.min.css" rel="stylesheet"> --}}
 
     <link
         href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-5-theme/1.2.0/select2-bootstrap-5-theme.min.css"
@@ -731,19 +731,20 @@
     <?php } ?>
 
 
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <script src="{{ asset('/template/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('/template/js/off-canvas.js') }}"></script>
     <script src="{{ asset('/template/js/hoverable-collapse.js') }}"></script>
-    <script src="{{ asset('datatables/datatables.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"
-        integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-    <script src="template/js/template.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <script src="{{ asset('template/js/jquery-3.7.1.min.js')}}"></script>
+    {{-- <script src="template/js/template.js"></script> --}}
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
+    <script src="{{ asset('datatables/datatables.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/2.1.2/js/dataTables.min.js"></script>
+    {{-- <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/2.1.2/js/dataTables.min.js"></script> --}}
 
 
     <?php if(isset($_GET['filter'])){ ?>
