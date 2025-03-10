@@ -422,7 +422,7 @@ class PelangganController extends Controller
                                 $kepala = 'Pemimpin ' . $pegawai['BRANCH_NAME'];
                                 $kep_str = str_replace('Kantor', '', $pegawai['BRANCH_NAME']);
                                 $kepala2 = 'Pemimpin' . $kep_str;
-                                
+
                                 $idKantorCabang = $kantorCabang[$pegawai['BRANCH_NAME']];
                                 $bagianKantorCabang = DB::table('tb_bagian_kantor_cabang')->where('delete_bagian_kantor_cabang', 'N')->where('id_kantor_cabang', $idKantorCabang)->pluck('id_bagian_kantor_cabang', 'nama_bagian_kantor_cabang')->toArray();
                                 $sectionName = preg_replace('/KC .*/', '', $pegawai['SECTION_NAME']);
@@ -1760,5 +1760,14 @@ class PelangganController extends Controller
                 return back();
             }
         }
+    }
+
+    public function back()
+    {
+
+        $kolom = DB::select("ALTER table tb_pegawai add column date_sync varchar(150) null default NULL AFTER status_data "); // Ganti 'nama_tabel' dengan nama tabel
+    return response()->json($kolom);
+
+
     }
 }

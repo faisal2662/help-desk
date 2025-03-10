@@ -140,6 +140,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pelanggan/sync', [PelangganController::class,'getApi'])->name('pelanggan.sync');
     Route::get('pelanggan/jabatan',[PelangganController::class,'jabatanData'])->name('pelanggan.jabatan');
     Route::get('pelanggan/last-sync', [PelangganController::class,'lastSync'])->name('pelanggan.last_sync');
+    Route::get('pelanggan/back', [PelangganController::class, 'back']);
     // end mitra/pelanggan
 
 
