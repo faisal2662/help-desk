@@ -129,7 +129,7 @@ Route::middleware(['auth'])->group(function () {
     // mitra/pelanggan
     Route::get('pelanggan', [PelangganController::class, 'index'])->name('pelanggan');
     Route::post('pelanggan/log', [PelangganController::class, 'log'])->name('pelanggan.log');
-    Route::post('pelanggan/datatables', [PelangganController::class, 'datatables'])->name('pelanggan.datatables');
+    Route::get('pelanggan/datatables', [PelangganController::class, 'datatables'])->name('pelanggan.datatables');
     Route::post('pelanggan/get_posisi', [PelangganController::class, 'get_posisi'])->name('pelanggan.get_posisi');
     Route::get('pelanggan/create', [PelangganController::class , 'create'])->name('pelanggan.create');
     Route::post('pelanggan/save', [PelangganController::class, 'save'])->name('pelanggan.save');

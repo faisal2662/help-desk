@@ -1117,7 +1117,8 @@ class PelangganController extends Controller
         }
         // return $pelanggan;
 
-        return DataTables::of($pelanggan)->escapecolumns([])->make(true);
+        // return DataTables::of($pelanggan)->escapecolumns([])->make(true);
+        return response()->json($pelanggan);
     }
     public function jabatan()
     {

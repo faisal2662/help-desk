@@ -41,7 +41,8 @@
             <p>&nbsp;</p>
             <div class="card">
                 <div class="card-body">
-                    <div class="card-title"><b>User</b> <span style="float:right;"> <a href="{{route('pelanggan.jabatan')}}" class="btn btn-sm btn-success">Jabatan </a>  <button id="btn_sync"
+                    <div class="card-title"><b>User</b> <span style="float:right;"> <a href="{{ route('pelanggan.jabatan') }}"
+                                class="btn btn-sm btn-success">Jabatan </a> <button id="btn_sync"
                                 class="btn btn-primary btn-sm"><i class='bx bx-sync'></i> Sync</button> <button
                                 style="display: none" id="btn_sync_load" class="btn btn-sm btn-primary" type="button"
                                 disabled>
@@ -59,7 +60,7 @@
                     </span>
                     <hr style="border-style: dashed;">
                     <p class="float-right"><strong>
-                        Last sync : </strong> <span class="text-sync"></span></p>
+                            Last sync : </strong> <span class="text-sync"></span></p>
                     <?php
                     $pelanggan = DB::table('tb_pegawai')
                         ->where([['tb_pegawai.delete_pegawai', 'N']])
@@ -75,8 +76,10 @@
                     </center>
 
                     <?php }else{ ?>
+
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover" id="dataTables" style="width: 100%;">
+                        <div id="dataTables"></div>
+                        {{-- <table class="table table-bordered table-striped table-hover" id="dataTables" style="width: 100%;">
                             <thead>
                                 <tr>
                                     <td><b>No</b></td>
@@ -93,7 +96,7 @@
                                     <td><b>Action</b></td>
                                 </tr>
                             </thead>
-                        </table>
+                        </table> --}}
                     </div>
 
                     <span style="display: none;">
@@ -136,7 +139,132 @@
 
 @section('script')
 
-    <script type="text/javascript">
+    <script>
+        new gridjs.Grid({
+            columns: [{name: "npp",width: "100px"},{name: "Nama", width: '350px'},{name: 'No. Telp' , width: "200px"}, "Email", {name:"Unit Kerja", width: '300px'}, { name: "Bagian Unit Kerja", width:'350px'},
+                 { name:"Level", width: "250px;"}, "Sebagai", "Status", {name:"Tanggal", width : "300px;" },{name: "Action", width:'200px'}
+            ],
+            server: {
+                url: "<?= route('pelanggan.datatables') ?>",
+                then: data => data.map(user => [
+                    user.npp_pegawai,
+                    gridjs.html(user.nama_pegawai),
+                    user.telp_pegawai,
+                    user.email_pegawai,
+                    user.kantor,
+                    user.bagian,
+
+                    user.level_pegawai,
+                    user.sebagai_pegawai,
+                    user.status_pegawai,
+                    user.tgl_pegawai,
+                    gridjs.html(user.action)
+
+                ])
+            },
+            pagination: {
+                limit: 20
+            }, // Load 50 data per halaman
+            search: true,
+            sort: true
+        }).render(document.getElementById("dataTables"));
+    </script>
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var table = new Tabulator("#dataTables", {
+                layout: "fitColumns", // Agar kolom otomatis menyesuaikan lebar
+                ajaxURL: "<?= route('pelanggan.datatables') ?>", // Ganti dengan API yang sesuai
+                pagination: "remote", // Mengaktifkan pagination (bisa diganti "remote" untuk server-side)
+                paginationSize: 20, // Jumlah data per halaman
+                movableColumns: true, // Kolom bisa dipindah-pindah
+                columns: [{
+                        title: "No",
+                        formatter: "rownum",
+                        hozAlign: "center"
+                    },
+                    {
+                        title: "NPP",
+                        field: "npp_pegawai"
+                    },
+                    {
+                        title: "Nama Lengkap",
+                        field: "nama_pegawai",
+                        formatter: "html"
+                    },
+                    {
+                        title: "No. Telp",
+                        field: "telp_pegawai"
+                    },
+                    {
+                        title: "Email",
+                        field: "email_pegawai"
+                    },
+                    {
+                        title: "Unit Kerja",
+                        field: "kantor"
+                    },
+                    {
+                        title: "Bagian Unit Kerja",
+                        field: "bagian"
+                    },
+                    {
+                        title: "Jabatan",
+                        field: "level_pegawai"
+                    },
+                    {
+                        title: "Sebagai",
+                        field: "sebagai_pegawai"
+                    },
+                    {
+                        title: "Status",
+                        field: "status_pegawai",
+                        formatter: 'html'
+                    },
+                    {
+                        title: "Tanggal",
+                        field: "tgl_pegawai",
+                        sorter: "date"
+                    },
+                    {
+                        title: "Action",
+                        field: "action",
+                        formatter: "html",
+                        width: 100
+                    },
+                    // {
+                    //     title: "Action", field: "id", formatter: function(cell, formatterParams){
+                    //         var id = cell.getValue();
+                    //         return `<button onclick="editUser(${id})">Edit</button>
+                //                 <button onclick="deleteUser(${id})">Delete</button>`;
+                    //     }
+                    // }
+                ]
+            });
+
+            // Fungsi Edit
+            window.editUser = function(id) {
+                alert("Edit user dengan ID: " + id);
+                // Bisa diisi dengan modal atau redirect
+            };
+
+            // Fungsi Delete
+            window.deleteUser = function(id) {
+                if (confirm("Yakin ingin menghapus user ini?")) {
+                    fetch(`/api/users/${id}`, {
+                            method: "DELETE"
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert("User berhasil dihapus!");
+                            table.replaceData("/api/users"); // Refresh data tabel
+                        })
+                        .catch(error => console.error("Error:", error));
+                }
+            };
+        });
+    </script> --}}
+
+    {{-- <script type="text/javascript">
         $('#dataTables').DataTable({
             "processing": true,
             "serverSide": true,
@@ -186,7 +314,7 @@
                 },
             ]
         });
-    </script>
+    </script> --}}
 
     <script>
         function getFormattedDate() {
@@ -224,7 +352,8 @@
         var perPage = 10;
         var totalPages = 1;
         var jwtToken = null; // Variabel untuk menyimpan token JWT
-        var i =1;
+        var i = 1;
+
         function fetchNextPage() {
             fetchData(currentPage).done(function(response) {
                 if (!response || !response.DATA) {
@@ -247,7 +376,7 @@
 
                 // Hitung total halaman
                 totalPages = Math.ceil(response.DATA.TOTAL / perPage);
-                totalPages = totalPages  - 1;
+                totalPages = totalPages - 1;
 
                 currentPage++;
 
@@ -359,7 +488,7 @@
         var batchSize = 10; // Ukuran batch
         // var totalData = 1364; // Total data
         var currentBatchIndex = 0; // Indeks batch saat ini
-		var j =1;
+        var j = 1;
 
         // Fungsi untuk mengirim data ke controller dalam batch
         function sendDataInBatches(totalData, dataFix) {
@@ -382,7 +511,7 @@
                     },
                     beforeSend: function() {
 
-						console.log('mengirim :' + j++)
+                        console.log('mengirim :' + j++)
                         // Tambahkan loader atau animasi sebelum pengiriman jika diperlukan
                     },
                     success: function(res) {
@@ -444,16 +573,16 @@
                     });
                 } else {
                     console.log("Semua data telah berhasil dikirim.");
-					$('#btn_sync_load').hide('slow');
-                        $('#btn_sync').show('slow');
-					 $('#alert').show();
-                            $('.type-alert').addClass('alert-primary');
-                            $('#message').text('Sync Selesai');
-                            setTimeout(() => {
-                                $('.type-alert').removeClass('alert-primary');
-                                $('#message').text('');
-                                $('#alert').hide('slow');
-                            }, 5000);
+                    $('#btn_sync_load').hide('slow');
+                    $('#btn_sync').show('slow');
+                    $('#alert').show();
+                    $('.type-alert').addClass('alert-primary');
+                    $('#message').text('Sync Selesai');
+                    setTimeout(() => {
+                        $('.type-alert').removeClass('alert-primary');
+                        $('#message').text('');
+                        $('#alert').hide('slow');
+                    }, 5000);
                 }
             }
 
@@ -463,23 +592,22 @@
 
 
 
-            function lastSync()
-            {
-                $.ajax({
-                    url: "{{route('pelanggan.last_sync')}}",
-                    method : "Get",
-                    contentType: 'application/json',
+        function lastSync() {
+            $.ajax({
+                url: "{{ route('pelanggan.last_sync') }}",
+                method: "Get",
+                contentType: 'application/json',
 
-                }).then(function(resp){
-                    console.log(resp)
-                    $('.text-sync').text(resp.data);
+            }).then(function(resp) {
+                console.log(resp)
+                $('.text-sync').text(resp.data);
 
-                }).fail(function(jqXHR,textStatus, errorThrown){
-                    console.log('Error During login : ', textStatus, errorThrown);
-                })
-            }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.log('Error During login : ', textStatus, errorThrown);
+            })
+        }
 
-            lastSync();
+        lastSync();
         // Fungsi login untuk mendapatkan token JWT
         function login() {
             const data = {

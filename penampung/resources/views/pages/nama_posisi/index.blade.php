@@ -80,7 +80,7 @@
 			"ajax":{
 				 "url": "<?= route('nama_jabatan.datatables') ?>",
 				 "dataType": "json",
-				 "type": "POST",
+				 "type": "get",
 				 "data":{ _token: "<?= csrf_token() ?>"}
 			   },
 			columns: [
