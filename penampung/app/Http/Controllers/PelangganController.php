@@ -66,7 +66,7 @@ class PelangganController extends Controller
         // return response()->json(['status' => 'success'], 200);
 
         // // $result =   get_api_sunfish::get_apis();
-        $filePath = base_path('../data/data_api_dev_sunfish.json');
+        $filePath = base_path('../data/data_update_07-03-25.json');
         // $data_api = null;
         $jsonContent = File::get($filePath);
 
@@ -420,7 +420,9 @@ class PelangganController extends Controller
                                 }
                             } elseif (array_key_exists($pegawai['BRANCH_NAME'], $kantorCabang)) {
                                 $kepala = 'Pemimpin ' . $pegawai['BRANCH_NAME'];
-
+                                $kep_str = str_replace('Kantor', '', $pegawai['BRANCH_NAME']);
+                                $kepala2 = 'Pemimpin' . $kep_str;
+                                
                                 $idKantorCabang = $kantorCabang[$pegawai['BRANCH_NAME']];
                                 $bagianKantorCabang = DB::table('tb_bagian_kantor_cabang')->where('delete_bagian_kantor_cabang', 'N')->where('id_kantor_cabang', $idKantorCabang)->pluck('id_bagian_kantor_cabang', 'nama_bagian_kantor_cabang')->toArray();
                                 $sectionName = preg_replace('/KC .*/', '', $pegawai['SECTION_NAME']);
@@ -453,6 +455,25 @@ class PelangganController extends Controller
 
                                 // $data[] = $pegawai;
                                 if ($pegawai['POSITION_NAME'] == $kepala) {
+
+                                    $kepala_unit = DB::table('tb_kepala_unit_kerja')->where('id_pegawai', $get_data_pegawai->id_pegawai)->where('delete_kepala_unit_kerja', 'N')->first();
+                                    if ($kepala_unit) {
+                                        DB::table('tb_kepala_unit_kerja')->where('id_pegawai', $get_data_pegawai->id_pegawai)->update([
+                                            'kantor_pegawai' => $pegawai['BRANCH_NAME'],
+                                            'id_bagian_kantor_cabang' => $idKantorCabang,
+                                            'id_bagian_kantor_pusat' => 0,
+                                            'id_bagian_kantor_wilayah' => 0,
+                                        ]);
+                                    } else {
+                                        DB::table('tb_kepala_unit_kerja')->insert([
+                                            'kantor_pegawai' => $pegawai['BRANCH_NAME'],
+                                            'id_bagian_kantor_cabang' => $idKantorCabang,
+                                            'id_pegawai' => $get_data_pegawai->id_pegawai,
+                                            'id_bagian_kantor_pusat' => 0,
+                                            'id_bagian_kantor_wilayah' => 0,
+                                        ]);
+                                    }
+                                }else if ($pegawai['POSITION_NAME'] == $kepala2) {
 
                                     $kepala_unit = DB::table('tb_kepala_unit_kerja')->where('id_pegawai', $get_data_pegawai->id_pegawai)->where('delete_kepala_unit_kerja', 'N')->first();
                                     if ($kepala_unit) {
@@ -618,6 +639,26 @@ class PelangganController extends Controller
                                     'id_bagian_kantor_wilayah' => 0,
                                 ]);
                             }
+                            // else if ($pegawai['POSITION_NAME'] == $kepala2) {
+
+                            //     $kepala_unit = DB::table('tb_kepala_unit_kerja')->where('id_pegawai', $get_data_pegawai->id_pegawai)->where('delete_kepala_unit_kerja', 'N')->first();
+                            //     if ($kepala_unit) {
+                            //         DB::table('tb_kepala_unit_kerja')->where('id_pegawai', $get_data_pegawai->id_pegawai)->update([
+                            //             'kantor_pegawai' => $pegawai['BRANCH_NAME'],
+                            //             'id_bagian_kantor_cabang' => $idKantorCabang,
+                            //             'id_bagian_kantor_pusat' => 0,
+                            //             'id_bagian_kantor_wilayah' => 0,
+                            //         ]);
+                            //     } else {
+                            //         DB::table('tb_kepala_unit_kerja')->insert([
+                            //             'kantor_pegawai' => $pegawai['BRANCH_NAME'],
+                            //             'id_bagian_kantor_cabang' => $idKantorCabang,
+                            //             'id_pegawai' => $get_data_pegawai->id_pegawai,
+                            //             'id_bagian_kantor_pusat' => 0,
+                            //             'id_bagian_kantor_wilayah' => 0,
+                            //         ]);
+                            //     }
+                            // }
                         } elseif (array_key_exists($pegawai['DEPARTMENT_NAME'], $kantorWilayah)) {
                             $kepala = 'Pimpinan ' . $pegawai['DIVISION_NAME'];
 
@@ -779,7 +820,8 @@ class PelangganController extends Controller
                             }
                         } else {
                             $kepala = 'Pemimpin ' . $pegawai['BRANCH_NAME'];
-
+                            $kep_str = str_replace('Kantor', '', $pegawai['BRANCH_NAME']);
+                            $kepala2 = 'Pemimpin' . $kep_str;
                             $idKantorCabang = $kantorCabang[$pegawai['BRANCH_NAME']];
                             $bagianKantorCabang = DB::table('tb_bagian_kantor_cabang')->where('delete_bagian_kantor_cabang', 'N')->where('id_kantor_cabang', $idKantorCabang)->pluck('id_bagian_kantor_cabang', 'nama_bagian_kantor_cabang')->toArray();
                             $sectionName = preg_replace('/KC .*/', '', $pegawai['SECTION_NAME']);
@@ -885,7 +927,7 @@ class PelangganController extends Controller
                     }
                 }
             }
-            return response()->json(['status' => 'ssuccess'], 200);
+            return response()->json(['status' => 'success'], 200);
         } catch (\Throwable $th) {
             throw $th;
             return response()->json(['status' => $th->getMessages]);
